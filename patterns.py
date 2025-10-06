@@ -40,3 +40,6 @@ def month_regex():
 
 def month_num_regex():
     return r"\d\d?"
+
+def time_regex():
+    return r"\d\d?\:\d\d( *GMT)?"
