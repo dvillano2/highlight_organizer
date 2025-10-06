@@ -1,0 +1,23 @@
+def team_regex():
+    return {
+            "arsenal": r"arsenal",
+            "aston_villa": r"villa",
+            "bournemouth": r"bournemouth",
+            "brentford": r"brentford",
+            "brighton": r"brighton",
+            "burnley": r"burnley",
+            "chelsea": r"chelsea",
+            "everton": r"everton",
+            "forest": r"forest",
+            "fulham": r"fulham",
+            "leeds": r"leeds",
+            "liverpool": "liverpool",
+            "man city": r"(man c|manchester c)",
+            "man u": r"(manchester u|man u)",
+            "newcastle": "newcastle",
+            "palace": r"palace",
+            "spurs": r"spur",
+            "sunderland": r"sunderland",
+            "west ham": r"west",
+            "wolves": r"wolv",
+            }
