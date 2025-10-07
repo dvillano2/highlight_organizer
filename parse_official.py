@@ -28,5 +28,24 @@ def p_list(content_div):
     return ps
 
 
-def info_list(p_list):
-    return [sub_p.text for p in p_list for sub_p in p if str(sub_p) != "<br/>"]
+def info_list(ps):
+    return [
+        sub_p.text.replace("*", "")
+        for p in ps
+        for sub_p in p
+        if str(sub_p) != "<br/>"
+    ]
+
+
+def remove_parentheses(info_list):
+    return [re.sub(r" *\(.*\)", "", info) for info in info_list]
+
+
+def test():
+    html = get_html()
+    content_div = parse_html(html)
+    ps = p_list(content_div)
+    info = info_list(ps)
+    info_nop = remove_parentheses(info)
+    for line in info_nop:
+        print(line)
