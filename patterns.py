@@ -26,7 +26,7 @@ def team_regex():
         "sunderland": {"regex": r"sunderland", "name": "Sunderland"},
         "west ham": {"regex": r"west", "name": "West Ham"},
         "wolves": {"regex": "wolv", "name": "Wolves"},
-    }
+    
 
 
 def mw_regex():
