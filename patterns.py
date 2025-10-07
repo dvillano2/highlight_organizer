@@ -26,15 +26,17 @@ def team_regex():
         "sunderland": {"regex": r"sunderland", "name": "Sunderland"},
         "west ham": {"regex": r"west", "name": "West Ham"},
         "wolves": {"regex": "wolv", "name": "Wolves"},
-    
+    }
 
 
 def mw_regex():
-    return r"(match|mw)"
+    return r"(matchweek|mw) ?\d\d?"
 
 
-def day_regex():
-    return r"(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)"
+def day_num_regex():
+    return (
+        r"(Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)( *\d\d?)?"
+    )
 
 
 def month_regex():
@@ -42,10 +44,6 @@ def month_regex():
         r"(August|September|October|November|December|"
         r"January|February|March|April|May|June|July)"
     )
-
-
-def month_num_regex():
-    return r"\d\d?"
 
 
 def time_regex():

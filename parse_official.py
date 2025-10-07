@@ -40,14 +40,6 @@ def info_list(ps):
 def remove_parentheses(info_list):
     return [re.sub(r" *\(.*\)", "", info) for info in info_list]
 
-def organize(info_nop):
-    matchweek = None
-    day_of_week = None
-    day = None
-    month = None
-    year = None
-    
-
 
 def test():
     html = get_html()
