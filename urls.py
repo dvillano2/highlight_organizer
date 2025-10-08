@@ -1,7 +1,6 @@
-"""Urls to pull schedule info, multiples so the corroborate each other"""
+"""Urls to pull schedule info, 2025-2026 season"""
 
 from typing import Dict
-from typing import Union
 import json
 
 
@@ -12,27 +11,13 @@ def mw_url_base() -> str:
     )
 
 
-def season_start_url() -> str:
-    return (
-        "https://www.premierleague.com/en/news/4324539/"
-        "all-380-fixtures-for-202526-premier-league-season"
-    )
-
-
-def make_mw_urls() -> Dict[str, str]:
+def make_2526_urls() -> Dict[str, str]:
     base: str = mw_url_base()
     mw_urls: Dict[str, str] = {}
     for i in range(1, 39):
         mw_index = str(i)
         mw_urls[mw_index] = base + mw_index
     return mw_urls
-
-
-def make_2526_urls() -> Dict[str, Union[str, Dict[str, str]]]:
-    urls: Dict[str, Union[str, Dict[str, str]]] = {}
-    urls["by_mw"] = make_mw_urls()
-    urls["season_start"] = season_start_url()
-    return urls
 
 
 def main() -> None:
