@@ -61,12 +61,7 @@ def parse_beginning_response(response: requests.Response):
     info = info_list(ps)
     return remove_parentheses(info)
 
+# For by mw data
 
-def test():
-    html = get_html()
-    content_div = parse_html(html)
-    ps = p_list(content_div)
-    info = info_list(ps)
-    info_nop = remove_parentheses(info)
-    for line in info_nop:
-        print(line)
+def parse_by_mw_respone(response: requests.Response) -> Dict:
+    return json.loads(response.text)
