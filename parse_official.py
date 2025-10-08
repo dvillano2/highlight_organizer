@@ -22,8 +22,6 @@ def p_list(content_div):
     ps = []
     for p in content_div.find_all("p"):
         if p.find("strong"):
-            for em in p.find_all("em"):
-                em.decompose()
             ps.append(p)
     return ps
 
