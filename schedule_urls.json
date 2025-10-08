@@ -39,5 +39,5 @@
         "37": "https://sdp-prem-prod.premier-league-prod.pulselive.com/api/v2/matches?competition=8&season=2025&matchweek=37",
         "38": "https://sdp-prem-prod.premier-league-prod.pulselive.com/api/v2/matches?competition=8&season=2025&matchweek=38"
     },
-    "season_start": "https://sdp-prem-prod.premier-league-prod.pulselive.com/api/v2/matches?competition=8&season=2025&matchweek="
+    "season_start": "https://www.premierleague.com/en/news/4324539/all-380-fixtures-for-202526-premier-league-season"
 }

@@ -1,29 +1,36 @@
+from typing import Dict
+from typing import Union
+from typing import Optional
+import re
+import json
 import requests
 from bs4 import BeautifulSoup
-import re
 
-from urls import URLS2526
-
-
-def get_html():
-    url = URLS2526["official"]
-    return requests.get(url).text
+UrlsDictType = Dict[str, Union[str, Dict[str, str]]]
 
 
-def parse_html(html):
-    soup = BeautifulSoup(html, "html.parser")
-    content_div = soup.find(
-        "div", class_="article__content js-article__content"
-    )
-    return content_div
+def get_urls() -> UrlsDictType:
+    with open("schedule_urls.json", "r", encoding="utf=8") as f:
+        urls = json.load(f)
+    return urls
 
 
-def p_list(content_div):
-    ps = []
-    for p in content_div.find_all("p"):
-        if p.find("strong"):
-            ps.append(p)
-    return ps
+def get_response(
+    mw_or_beginnig: str, urls: UrlsDictType, mw_num: Optional[int] = None
+) -> requests.Response:
+    if mw_or_beginnig == "beginning":
+        url = urls["season_start"]
+    else:
+        by_mw = urls.get("by_mw")
+        assert isinstance(by_mw, dict)
+        if isinstance(mw_num, int):
+            url = by_mw[str(mw_num)]
+        else:
+            raise ValueError("Need a mw number to if getting urls by mw")
+    return requests.get(url)
+
+
+# For season start/beginning data
 
 
 def info_list(ps):
@@ -37,6 +44,22 @@ def info_list(ps):
 
 def remove_parentheses(info_list):
     return [re.sub(r" *\(.*\)", "", info) for info in info_list]
+
+
+def parse_beginning_response(response: requests.Response):
+    html = response.text
+    soup = BeautifulSoup(html, "html.parser")
+    content_div = soup.find(
+        "div", class_="article__content js-article__content"
+    )
+
+    ps = []
+    for p in content_div.find_all("p"):
+        if p.find("strong"):
+            ps.append(p)
+
+    info = info_list(ps)
+    return remove_parentheses(info)
 
 
 def test():

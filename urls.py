@@ -14,8 +14,8 @@ def mw_url_base() -> str:
 
 def season_start_url() -> str:
     return (
-        "https://sdp-prem-prod.premier-league-prod.pulselive.com"
-        "/api/v2/matches?competition=8&season=2025&matchweek="
+        "https://www.premierleague.com/en/news/4324539/"
+        "all-380-fixtures-for-202526-premier-league-season"
     )
 
 
