@@ -162,6 +162,9 @@ def by_mw_organize_single(
             "year": date_time_info["year"],
             "season": season,
             "timezone": match["kickoffTimezone"],
+            "id": match["matchId"],
+            "finished": "yes" if match["period"] == "FullTime" else "no",
+            "youtube_link": "",
         }
         home = match["homeTeam"]["name"]
         away = match["awayTeam"]["name"]
@@ -174,14 +177,14 @@ def by_mw_organize_single(
     return matches, counter
 
 
-def by_mw_organize_single(season: str = "2025-2026"):
-    with open("schedule_urls.json", "r", eccoding="utf-8") as f:
+def by_mw_organize_season(season: str = "2025-2026"):
+    with open("schedule_urls.json", "r", encoding="utf-8") as f:
         urls = json.load(f)
-    season = {}
+    full_season: Dict = {}
     counter = 1
     for mw in range(1, 39):
         response = get_response("mw", urls, mw)
         mw_dict = parse_by_mw_respone(response)
         matches, counter = by_mw_organize_single(mw_dict, counter)
-        season.update(matches)
-    return season
+        full_season |= matches
+    return full_season
