@@ -1,10 +1,14 @@
+"""Organizes official PL website which is hardcoded in the first function"""
+
 import json
 from datetime import datetime
 from typing import Dict
+from typing import Tuple
 import requests
 
 
 def mw_url_base() -> str:
+    "Hardcoded base url for pulling mw info"
     return (
         "https://sdp-prem-prod.premier-league-prod.pulselive.com/"
         "api/v2/matches?competition=8&season=2025&matchweek="
@@ -12,6 +16,7 @@ def mw_url_base() -> str:
 
 
 def pull_date_time_data(date_time_str: str) -> Dict[str, str]:
+    "Helper for parsing date and time info"
     date_obj = datetime.strptime(date_time_str, "%Y-%m-%d %H:%M:%S")
     return {
         "year": date_obj.strftime("%Y"),
@@ -24,7 +29,8 @@ def pull_date_time_data(date_time_str: str) -> Dict[str, str]:
 
 def organize_single_mw(
     mw_info: Dict, counter: int = 1, season: str = "2025-2026"
-):
+) -> Tuple[Dict[int, Dict[str, str]], int]:
+    """Organizes a single matchweek"""
     matches = {}
     for match in mw_info["data"]:
         date_time_info = pull_date_time_data(match["kickoff"])
@@ -47,7 +53,7 @@ def organize_single_mw(
     return matches, counter
 
 
-def organize_season():
+def organize_season() -> Dict[int, Dict[str, str]]:
     """For 2025-2026 season"""
     base_url = mw_url_base()
     full_season: Dict = {}
