@@ -3,11 +3,13 @@ from patterns import mw_regex
 from patterns import day_num_regex
 from patterns import month_regex
 from patterns import team_regex
+from patterns import time_regex
 
 MWREGEX = mw_regex()
 DAYNUMREGEX = day_num_regex()
 MONTHREGEX = month_regex()
 TEAMREGEX = team_regex()
+TIMEREGEX = time_regex()
 
 
 def match_mw(text):
@@ -36,6 +38,14 @@ def match_month(text):
     return None
 
 
+def match_time(text):
+    search = re.search(TIMEREGEX, text)
+    if search:
+        match = search.group(0)
+        return re.search(r"\d\d?\:\d\d", match).group(0)
+    return None
+
+
 def check_teams(text):
     v_split = text.split(" v ")
     teams = {"home": None, "away": None}
@@ -53,6 +63,7 @@ def check_line(line):
     tracker = {}
     tracker["mw"] = match_mw(line)
     tracker["month"] = match_month(line)
+    tracker["time"] = match_time(line)
     day_num = match_day_num(line)
     tracker["day"] = day_num["day"]
     tracker["num"] = day_num["num"]
@@ -71,6 +82,7 @@ def organize(info):
     month = None
     year = None
     for line in info:
+        time = None
         line_info = check_line(line)
         line_mw = line_info["mw"]
         if line_mw is not None:
@@ -98,12 +110,17 @@ def organize(info):
         if line_day is not None:
             day = line_day
 
+        line_time = line_info["time"]
+        if line_time is not None:
+            time = line_time
+
         if line_info["home"] is not None and line_info["away"] is not None:
             matches[counter] = {
                 "mw": mw,
                 "day": day,
                 "num": num,
                 "month": month,
+                "time": time,
                 "year": year,
                 "home": line_info["home"],
                 "away": line_info["away"],
