@@ -1,9 +1,12 @@
 """Organizes official PL website which is hardcoded in the first function"""
 
 import json
+import sqlite3
 from datetime import datetime
 from typing import Dict
 from typing import Tuple
+from io import StringIO
+import pandas as pd
 import requests
 
 
@@ -65,3 +68,17 @@ def organize_season() -> Dict[int, Dict[str, str]]:
         matches, counter = organize_single_mw(mw_dict, counter)
         full_season |= matches
     return full_season
+
+
+def main() -> None:
+    """Writes the schedule to a tiny db"""
+    full_schedule = json.dumps(organize_season())
+    df = pd.read_json(StringIO(full_schedule))
+    df = df.T
+    conn = sqlite3.connect("PL_20252026_season.db")
+    df.to_sql("Schedule", conn, if_exists="replace", index=False)
+    conn.close()
+
+
+if __name__ == "__main__":
+    main()
