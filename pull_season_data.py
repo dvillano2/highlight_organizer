@@ -56,25 +56,31 @@ def organize_single_mw(
     return matches, counter
 
 
-def organize_season() -> Dict[int, Dict[str, str]]:
+def organize_mws(min_mw=1) -> Dict[int, Dict[str, str]]:
     """For 2025-2026 season"""
     base_url = mw_url_base()
-    full_season: Dict = {}
+    mws: Dict = {}
     counter = 1
-    for mw in range(1, 39):
+    for mw in range(min_mw, 39):
         url = base_url + str(mw)
         response = requests.get(url)
         mw_dict = json.loads(response.text)
         matches, counter = organize_single_mw(mw_dict, counter)
-        full_season |= matches
-    return full_season
+        mws |= matches
+    return mws
+
+
+def mws_to_df(mws: Dict[int, Dict[str, str]]) -> pd.DataFrame:
+    """Makes the mws dict a df"""
+    mws_json = json.dumps(mws)
+    df = pd.read_json(StringIO(mws_json))
+    return df.T
 
 
 def main() -> None:
     """Writes the schedule to a tiny db"""
-    full_schedule = json.dumps(organize_season())
-    df = pd.read_json(StringIO(full_schedule))
-    df = df.T
+    mws = organize_mws()
+    df = mws_to_df(mws)
     conn = sqlite3.connect("PL_20252026_season.db")
     df.to_sql("Schedule", conn, if_exists="replace", index=False)
     conn.close()
