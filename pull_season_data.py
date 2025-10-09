@@ -27,6 +27,7 @@ def pull_date_time_data(date_time_str: str) -> Dict[str, str]:
         "num": date_obj.strftime("%d"),
         "day": date_obj.strftime("%A"),
         "time": date_obj.strftime("%H:%M"),
+        "full_date": date_obj.strftime("%Y-%m-%d %H:%M"),
     }
 
 
@@ -44,6 +45,7 @@ def organize_single_mw(
             "month": date_time_info["month"],
             "time": date_time_info["time"],
             "year": date_time_info["year"],
+            "full_date": date_time_info["full_date"],
             "season": season,
             "timezone": match["kickoffTimezone"],
             "id": match["matchId"],

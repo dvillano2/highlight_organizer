@@ -20,7 +20,7 @@ def update_schedule():
     df_new_schedule.to_sql("temp", conn, if_exists="replace", index=False)
     cursor = conn.cursor()
     cursor.execute(
-        " UPDATE schedule SET day, num, month, time, year, timezone, "
+        "UPDATE schedule SET day, num, month, time, year, timezone, "
         "finished FROM temp WHERE schedule.id = temp.id;"
     )
     cursor.execute("DROP TABLE temp;")
