@@ -1,5 +1,5 @@
-import yt_dlp
 import sqlite3
+import yt_dlp
 from datetime import datetime
 
 
@@ -14,7 +14,7 @@ def get_min_date_without_link():
     return rows[0][0]
 
 
-def format_date_for_youtube_comparison(date: str) -> str:
+def format_date_for_internal_comparison(date: str) -> str:
     no_time: str = date.split(" ")[0]
     return no_time.replace("-", "")
 
