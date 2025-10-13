@@ -1,4 +1,4 @@
-from typing import Dict
+rom typing import Dict
 from typing import List
 from typing import Tuple
 import re
@@ -24,13 +24,25 @@ def format_date_for_displayed_comparison(date: str) -> str:
     return reordered
 
 
+def pull_finished_games():
+    conn = sqlite3.connect("PL_20252026_season.db")
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT full_date, home, away, id FROM schedule WHERE finished = 'yes';"
+    )
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return rows
+
+
 def format_games(
     games_info: List[Tuple[str, str, str, str]]
 ) -> List[Tuple[re.Pattern, re.Pattern, re.Pattern, str]]:
-    "assumes games info comes from a selece full_date, home, away ,id query"
+    "assumes games info comes from a select full_date, home, away ,id query"
     regex = {
-        team_name: re.compile(team_regex)
-        for team_name, team_regex in team_regex().items()
+        team_name: re.compile(team_regex_pattern, re.IGNORECASE)
+        for team_name, team_regex_pattern in team_regex().items()
     }
     return [
         (
@@ -59,12 +71,15 @@ def match_games_to_videos(
         game_id = game[3]
         matching_items = game[:3]
         for video in video_info:
+            missed = True
             if all(
                 pattern.search(video["title"]) for pattern in matching_items
             ):
                 url_id.append((video["url"], game_id))
+                missed = False
                 break
-        missed_games.append(game_id)
+        if missed:
+            missed_games.append(game_id)
     return url_id, missed_games
 
 
