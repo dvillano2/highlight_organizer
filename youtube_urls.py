@@ -24,15 +24,16 @@ def get_youtube_chunk(start_index=1, chunck_size=50, channel_name="NBCSports"):
     ydl_opts = {
         "extract_flat": True,
         "quiet": True,
+        "no_warnings": True,
         "playlist_items": f"{start_index}-{start_index + chunck_size - 1}",
     }
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         video_info = ydl.extract_info(url, download=False)
-    return video_info
+    return video_info["entries"]
 
 
 def pull_single_upload_date(url: str):
-    with yt_dlp.YoutubeDL({"quiet": True}) as ydl:
+    with yt_dlp.YoutubeDL({"quiet": True, "no_warnings": True}) as ydl:
         video_info = ydl.extract_info(url, download=False)
     return video_info["upload_date"]
 
@@ -40,7 +41,7 @@ def pull_single_upload_date(url: str):
 def pull_videos_after_date(
     date: str, chunck_size: int = 50, channel_name: str = "NBCSports"
 ):
-    full_info: dict = {}
+    full_info = []
     start_index = 1
     earliest_date_seen: str = date
     while date <= earliest_date_seen:
@@ -49,8 +50,8 @@ def pull_videos_after_date(
             chunck_size=chunck_size,
             channel_name=channel_name,
         )
-        full_info |= video_info
-        last_url = video_info["entries"][-1]["url"]
+        full_info.extend(video_info)
+        last_url = video_info[-1]["url"]
         earliest_date_seen = pull_single_upload_date(last_url)
         start_index += chunck_size
     return full_info
