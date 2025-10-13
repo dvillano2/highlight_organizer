@@ -5,6 +5,7 @@ import sqlite3
 from datetime import datetime
 from typing import Dict
 from typing import Tuple
+from typing import Union
 from io import StringIO
 import pandas as pd
 import requests
@@ -58,16 +59,26 @@ def organize_single_mw(
     return matches, counter
 
 
+def pull_single_mw(
+    mw: int, base_url: str = mw_url_base(), counter: int = 1, concat=False
+) -> Union[Tuple[Dict[int, Dict[str, str]], int], Dict[int, Dict[str, str]]]:
+    url = base_url + str(mw)
+    response = requests.get(url)
+    mw_dict = json.loads(response.text)
+    matches, counter = organize_single_mw(mw_dict, counter)
+    if concat:
+        return matches, counter
+    return matches
+
+
 def organize_mws(min_mw=1) -> Dict[int, Dict[str, str]]:
     """For 2025-2026 season"""
     base_url = mw_url_base()
     mws: Dict = {}
     counter = 1
     for mw in range(min_mw, 39):
-        url = base_url + str(mw)
-        response = requests.get(url)
-        mw_dict = json.loads(response.text)
-        matches, counter = organize_single_mw(mw_dict, counter)
+        matches, counter = pull_single_mw(mw, base_url, counter, True)
+        assert isinstance(matches, dict)
         mws |= matches
     return mws
 
@@ -84,7 +95,15 @@ def main() -> None:
     mws = organize_mws()
     df = mws_to_df(mws)
     conn = sqlite3.connect("PL_20252026_season.db")
-    df.to_sql("Schedule", conn, if_exists="replace", index=False)
+    conn.execute("DROP TABLE IF EXISTS schedule;")
+    conn.commit()
+    df.to_sql(
+        "schedule",
+        conn,
+        index=False,
+        dtype={"mw": "INTEGER", "id": "TEXT PRIMARY KEY"},
+    )
+    conn.commit()
     conn.close()
 
 
