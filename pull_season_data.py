@@ -51,7 +51,7 @@ def organize_single_mw(
             "timezone": match["kickoffTimezone"],
             "id": match["matchId"],
             "finished": "yes" if match["period"] == "FullTime" else "no",
-            "youtube_link": "",
+            "youtube_url": "",
             "home": match["homeTeam"]["name"],
             "away": match["awayTeam"]["name"],
         }
