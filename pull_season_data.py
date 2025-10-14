@@ -95,7 +95,9 @@ def main() -> None:
     mws = organize_mws()
     df = mws_to_df(mws)
     conn = sqlite3.connect("PL_20252026_season.db")
-    conn.execute("DROP TABLE IF EXISTS schedule;")
+    cursor = conn.cursor()
+    cursor.execute("DROP TABLE IF EXISTS schedule;")
+    cursor.close()
     conn.commit()
     df.to_sql(
         "schedule",

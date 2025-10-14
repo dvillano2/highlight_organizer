@@ -3,11 +3,12 @@ import yt_dlp
 from datetime import datetime
 
 
-def get_min_date_without_link():
+def get_min_finished_date_without_link():
     conn = sqlite3.connect("PL_20252026_season.db")
     cursor = conn.cursor()
     cursor.execute(
-        "SELECT MIN(full_date) FROM SCHEDULE WHERE youtube_link='';"
+        "SELECT MIN(full_date) FROM SCHEDULE WHERE "
+        "finished = 'yes AND 'youtube_url='';"
     )
     rows = cursor.fetchall()
     conn.close()
@@ -55,3 +56,10 @@ def pull_videos_after_date(
         earliest_date_seen = pull_single_upload_date(last_url)
         start_index += chunck_size
     return full_info
+
+
+def pull_possible_video_urls():
+    date = get_min_finished_date_without_link()
+    if date is None:
+        return
+    return pull_videos_after_date(date)

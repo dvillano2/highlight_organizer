@@ -1,9 +1,10 @@
-rom typing import Dict
+from typing import Dict
 from typing import List
 from typing import Tuple
 import re
 import sqlite3
 from patterns import team_regex
+from youtube_urls import pull_possible_video_urls
 
 
 def filter_for_highlights(video_info: list[dict]) -> list[dict]:
@@ -28,7 +29,8 @@ def pull_finished_games():
     conn = sqlite3.connect("PL_20252026_season.db")
     cursor = conn.cursor()
     cursor.execute(
-        "SELECT full_date, home, away, id FROM schedule WHERE finished = 'yes';"
+            "SELECT full_date, home, away, id FROM schedule "
+            "WHERE finished = 'yes' AND youtube_url = "";"
     )
     rows = cursor.fetchall()
     cursor.close()
@@ -93,3 +95,11 @@ def update_db_with_links(url_id_pairs: List[Tuple[str, str]]) -> None:
     cursor.close()
     conn.close()
     return
+
+def update_missing_links():
+    possible_videos = pull_possible_video_urls()
+    highlight_videos = filter_for_highlights(possible_videos)
+    games = pull_finished_games()
+    url_id, missing_games = match_games_to_videos(highlight_videos, games)
+    update_db_with_links(url_id)
+    return missing_games

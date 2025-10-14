@@ -9,6 +9,8 @@ def update_mw(mw=int):
         for key, value in mw_games.items()
         if value["finished"] == "yes"
     }
+    if not finished_games:
+        return
     mw_df = mws_to_df(finished_games)
 
     conn = sqlite3.connect("PL_20252026_season.db")
