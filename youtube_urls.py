@@ -7,8 +7,11 @@ def get_min_finished_date_without_link():
     conn = sqlite3.connect("PL_20252026_season.db")
     cursor = conn.cursor()
     cursor.execute(
-        "SELECT MIN(full_date) FROM SCHEDULE WHERE "
-        "finished = 'yes AND 'youtube_url='';"
+        """
+        SELECT MIN(full_date)
+        FROM schedule
+        WHERE finished = 'yes' AND youtube_url = '';
+        """
     )
     rows = cursor.fetchall()
     conn.close()
@@ -53,7 +56,8 @@ def pull_videos_after_date(
         )
         full_info.extend(video_info)
         last_url = video_info[-1]["url"]
-        earliest_date_seen = pull_single_upload_date(last_url)
+        unformatted = pull_single_upload_date(last_url)
+        earliest_date_seen = format_date_for_internal_comparison(unformatted)
         start_index += chunck_size
     return full_info
 
@@ -62,4 +66,4 @@ def pull_possible_video_urls():
     date = get_min_finished_date_without_link()
     if date is None:
         return
-    return pull_videos_after_date(date)
+    return pull_videos_after_date(format_date_for_internal_comparison(date))

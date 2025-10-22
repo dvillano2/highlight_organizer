@@ -29,8 +29,8 @@ def pull_finished_games():
     conn = sqlite3.connect("PL_20252026_season.db")
     cursor = conn.cursor()
     cursor.execute(
-            "SELECT full_date, home, away, id FROM schedule "
-            "WHERE finished = 'yes' AND youtube_url = "";"
+        "SELECT full_date, home, away, id FROM schedule "
+        "WHERE finished = 'yes' AND youtube_url = '';"
     )
     rows = cursor.fetchall()
     cursor.close()
@@ -95,6 +95,7 @@ def update_db_with_links(url_id_pairs: List[Tuple[str, str]]) -> None:
     cursor.close()
     conn.close()
     return
+
 
 def update_missing_links():
     possible_videos = pull_possible_video_urls()

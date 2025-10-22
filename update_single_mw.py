@@ -1,5 +1,6 @@
 import sqlite3
 from pull_season_data import pull_single_mw, mws_to_df
+from update_season_data import update_query
 
 
 def update_mw(mw=int):
@@ -14,13 +15,11 @@ def update_mw(mw=int):
     mw_df = mws_to_df(finished_games)
 
     conn = sqlite3.connect("PL_20252026_season.db")
-    mw_df.to_sql("temp", conn, if_exists="replace", index=False)
+    mw_df.to_sql("tmp", conn, if_exists="replace", index=False)
     cursor = conn.cursor()
     cursor = conn.cursor()
-    cursor.execute(
-        "UPDATE schedule SET day, num, month, time, year, timezone, "
-        "full_date, finished FROM temp WHERE schedule.id = temp.id;"
-    )
+    query = update_query()
+    cursor.execute(query)
     cursor.execute("DROP TABLE temp;")
     conn.commit()
     cursor.close()
