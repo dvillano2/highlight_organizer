@@ -1,3 +1,9 @@
+"""
+Regex for matching teams in youtube descriptions to
+offical names
+"""
+
+
 def team_regex():
     return {
         "Arsenal": r"arsenal",

@@ -1,3 +1,8 @@
+"""Main funciton here is update_missing_links at the bottom,
+this is for after you have updated the db with the game status
+... this will try to update games that have finiished status
+yes but don't have youtube info"""
+
 from typing import Dict
 from typing import List
 from typing import Tuple
