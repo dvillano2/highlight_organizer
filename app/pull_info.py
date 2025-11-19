@@ -5,7 +5,7 @@ def pull_db_info():
     conn = sqlite3.connect("PL_20252026_season.db")
     cursor = conn.cursor()
     cursor.execute(
-        "SELECT mw, day, num, month, home, away, youtube_url FROM schedule ORDER BY full_date"
+        "SELECT mw, day, num, month, home, away, youtube_id FROM schedule ORDER BY full_date"
     )
     rows = cursor.fetchall()
     cursor.close()

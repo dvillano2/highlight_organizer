@@ -61,8 +61,8 @@
           <details class="accordion">
             <summary class="accordion-title">{{ date }}</summary>
             <ul class="accordion-content">
-              {% for match, link in matches.items() %}
-              <li><a href="{{ link }}">{{ match }}</a></li>
+              {% for match, id in matches.items() %}
+              <li><a href="{{ id }}">{{ match }}</a></li>
               {% endfor %}
             </ul>
           </details>
@@ -88,10 +88,7 @@
       links.forEach((link) => {
         link.addEventListener("click", (e) => {
           e.preventDefault();
-          const url = link.getAttribute("href");
-          const parts = url.split("v=");
-          console.log(parts);
-          const videoId = parts[parts.length - 1];
+          const videoId = link.getAttribute("href");
           iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
         });
       });

@@ -52,6 +52,7 @@ def organize_single_mw(
             "id": match["matchId"],
             "finished": "yes" if match["period"] == "FullTime" else "no",
             "youtube_url": "",
+            "youtube_id": "",
             "home": match["homeTeam"]["name"],
             "away": match["awayTeam"]["name"],
         }
