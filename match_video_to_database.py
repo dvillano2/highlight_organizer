@@ -14,6 +14,8 @@ from youtube_urls import pull_possible_video_urls
 
 def filter_for_highlights(video_info: list[dict]) -> list[dict]:
     "drop videos that don't have highlights in their title"
+    if not video_info:
+        return []
     return [
         info for info in video_info if "highlights" in info["title"].lower()
     ]
