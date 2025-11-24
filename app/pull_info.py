@@ -1,15 +1,19 @@
-import sqlite3
+from db import SessionLocal
+from sqlalchemy import text
 
 
 def pull_db_info():
-    conn = sqlite3.connect("PL_20252026_season.db")
-    cursor = conn.cursor()
-    cursor.execute(
-        "SELECT mw, day, num, month, home, away, youtube_id FROM schedule ORDER BY full_date"
+    session = SessionLocal()
+    rows = (
+        session.execute(
+            text(
+                "SELECT mw, day, num, month, home, away, youtube_id FROM schedule ORDER BY full_date"
+            )
+        )
+        .mappings()
+        .all()
     )
-    rows = cursor.fetchall()
-    cursor.close()
-    conn.close()
+    session.close()
     return rows
 
 

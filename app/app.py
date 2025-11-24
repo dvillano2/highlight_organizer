@@ -9,7 +9,3 @@ def home():
     rows = pull_db_info()
     highlights = make_dict(rows)
     return render_template("highlights.html", highlights=highlights)
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
