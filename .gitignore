@@ -1,3 +1,5 @@
 __pycache__/
 venv/
 .DS_Store
+.env
+PL_20252026_season.db
