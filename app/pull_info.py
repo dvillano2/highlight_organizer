@@ -34,11 +34,13 @@ def drop_empty_weeks(structured_dict):
 def make_dict(rows):
     final_dict = {}
     for row in rows:
-        if row[0] not in final_dict:
-            final_dict[row[0]] = {}
-        date_str = f"{row[1]} {row[3]} {row[2]}"
-        if date_str not in final_dict[row[0]]:
-            final_dict[row[0]][date_str] = {}
-        final_dict[row[0]][date_str][f"{row[4]} v {row[5]}"] = row[6]
+        if row["mw"] not in final_dict:
+            final_dict[row["mw"]] = {}
+        date_str = f"{row['day']} {row['month']} {row['num']}"
+        if date_str not in final_dict[row["mw"]]:
+            final_dict[row["mw"]][date_str] = {}
+        final_dict[row["mw"]][date_str][f"{row['home']} v {row['away']}"] = (
+            row["youtube_id"]
+        )
     drop_empty_weeks(final_dict)
     return final_dict
