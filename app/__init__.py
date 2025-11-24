@@ -1,4 +1,4 @@
-from pull_info import make_dict, pull_db_info
+from .pull_info import make_dict, pull_db_info
 from flask import Flask, render_template
 
 app = Flask(__name__)
