@@ -1,9 +1,9 @@
-from .db import SessionLocal
+from .db import Session
 from sqlalchemy import text
 
 
 def pull_db_info():
-    session = SessionLocal()
+    session = Session()
     rows = (
         session.execute(
             text(

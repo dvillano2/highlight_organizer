@@ -10,6 +10,8 @@ import re
 import sqlite3
 from patterns import team_regex
 from youtube_urls import pull_possible_video_urls
+from app.db import engine, local_engine, Session, LocalSession
+from sqlalchemy import text
 
 
 def filter_for_highlights(video_info: list[dict]) -> list[dict]:
@@ -32,21 +34,23 @@ def format_date_for_displayed_comparison(date: str) -> str:
     return reordered
 
 
-def pull_finished_games():
-    conn = sqlite3.connect("PL_20252026_season.db")
-    cursor = conn.cursor()
-    cursor.execute(
+def to_chage_query():
+    return (
         "SELECT full_date, home, away, id FROM schedule "
         "WHERE finished = 'yes' AND youtube_url = '';"
     )
-    rows = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    return rows
+
+
+def pull_finished_games(local=False):
+    query = to_chage_query()
+    session_maker = LocalSession if local else Session
+    with session_maker() as session:
+        to_change = session.execute(text(query)).mappings().all()
+    return to_change
 
 
 def format_games(
-    games_info: List[Tuple[str, str, str, str]]
+    games_info: List[Dict[str, str]]
 ) -> List[Tuple[re.Pattern, re.Pattern, re.Pattern, str]]:
     "assumes games info comes from a select full_date, home, away ,id query"
     regex = {
@@ -55,10 +59,12 @@ def format_games(
     }
     return [
         (
-            re.compile(format_date_for_displayed_comparison(game[0])),
-            regex[game[1]],
-            regex[game[2]],
-            game[3],
+            re.compile(
+                format_date_for_displayed_comparison(game["full_date"])
+            ),
+            regex[game["home"]],
+            regex[game["away"]],
+            game["id"],
         )
         for game in games_info
     ]
@@ -66,7 +72,7 @@ def format_games(
 
 def match_games_to_videos(
     video_info: List[Dict],
-    games_info: List[Tuple[str, str, str, str]],
+    games_info: List[Dict[str, str]],
 ) -> Tuple[List[Tuple[str, str, str]], List[str]]:
     """
     this is naive with the double loop, various ways to make it better
@@ -92,23 +98,30 @@ def match_games_to_videos(
     return url_id, missed_games
 
 
-def update_db_with_links(url_id_triples: List[Tuple[str, str, str]]) -> None:
-    conn = sqlite3.connect("PL_20252026_season.db")
-    cursor = conn.cursor()
-    cursor.executemany(
-        "UPDATE schedule SET youtube_url = ?, youtube_id = ?  WHERE id = ?;",
-        url_id_triples,
+def update_db_with_links(
+    url_id_triples: List[Tuple[str, str, str]], local=False
+) -> None:
+    update = text(
+        "UPDATE schedule "
+        "SET youtube_url = :youtube_url, youtube_id = :youtube_id "
+        "WHERE id = :id"
     )
-    conn.commit()
-    cursor.close()
-    conn.close()
+    formatted_url_id_triples = [
+        {"youtube_url": u, "youtube_id": y, "id": i}
+        for u, y, i in url_id_triples
+    ]
+
+    session_maker = LocalSession if local else Session
+    with session_maker() as session:
+        session.execute(update, formatted_url_id_triples)
+        session.commit()
     return
 
 
-def update_missing_links():
+def update_missing_links(local=False):
     possible_videos = pull_possible_video_urls()
     highlight_videos = filter_for_highlights(possible_videos)
     games = pull_finished_games()
     url_id, missing_games = match_games_to_videos(highlight_videos, games)
-    update_db_with_links(url_id)
+    update_db_with_links(url_id, local)
     return missing_games

@@ -1,21 +1,25 @@
 import sqlite3
 import yt_dlp
 from datetime import datetime
+from app.db import engine, local_engine, Session, LocalSession
+from sqlalchemy import text
 
 
-def get_min_finished_date_without_link():
-    conn = sqlite3.connect("PL_20252026_season.db")
-    cursor = conn.cursor()
-    cursor.execute(
-        """
+def min_date_query():
+    return """
         SELECT MIN(full_date)
         FROM schedule
         WHERE finished = 'yes' AND youtube_url = '';
         """
-    )
-    rows = cursor.fetchall()
-    conn.close()
-    return rows[0][0]
+
+
+def get_min_finished_date_without_link(local=False):
+    session_maker = LocalSession if local else Session
+
+    with session_maker() as session:
+        query = min_date_query()
+        min_date = session.execute(text(query)).mappings().first()["min"]
+    return min_date
 
 
 def format_date_for_internal_comparison(date: str) -> str:
@@ -30,6 +34,11 @@ def get_youtube_chunk(start_index=1, chunck_size=50, channel_name="NBCSports"):
         "quiet": True,
         "no_warnings": True,
         "playlist_items": f"{start_index}-{start_index + chunck_size - 1}",
+        "http_headers": {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/142.0.0.0 Safari/537.36"
+        },
     }
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         video_info = ydl.extract_info(url, download=False)
@@ -62,8 +71,8 @@ def pull_videos_after_date(
     return full_info
 
 
-def pull_possible_video_urls():
-    date = get_min_finished_date_without_link()
+def pull_possible_video_urls(local=False):
+    date = get_min_finished_date_without_link(local)
     if date is None:
         return
     return pull_videos_after_date(format_date_for_internal_comparison(date))

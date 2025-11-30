@@ -1,9 +1,11 @@
-import sqlite3
 from pull_season_data import pull_single_mw, mws_to_df
 from update_season_data import update_query
+from sqlalchemy import text
+from app.db import engine, Session, local_engine, LocalSession
+from sqlalchemy.exc import SQLAlchemyError
 
 
-def update_mw(mw=int):
+def update_mw(mw: int, local: bool = False):
     mw_games = pull_single_mw(mw)
     finished_games = {
         key: value
@@ -14,14 +16,18 @@ def update_mw(mw=int):
         return
     mw_df = mws_to_df(finished_games)
 
-    conn = sqlite3.connect("PL_20252026_season.db")
-    mw_df.to_sql("tmp", conn, if_exists="replace", index=False)
-    cursor = conn.cursor()
-    cursor = conn.cursor()
+    current_engine = local_engine if local else engine
+    session_maker = LocalSession if local else Session
+
+    mw_df.to_sql("tmp", con=current_engine, if_exists="replace", index=False)
+
     query = update_query()
-    cursor.execute(query)
-    cursor.execute("DROP TABLE temp;")
-    conn.commit()
-    cursor.close()
-    conn.close()
+    with session_maker() as session:
+        try:
+            session.execute(text(query))
+            session.execute(text("DROP TABLE tmp;"))
+            session.commit()
+        except SQLAlchemyError:
+            session.rollback()
+            raise
     return

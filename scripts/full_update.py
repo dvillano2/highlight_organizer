@@ -2,6 +2,11 @@
 
 from update_season_data import update_schedule
 from match_video_to_database import update_missing_links
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+DATABASE_URL = os.environ.get("DATABASE_URL")
 
 if __name__ == "__main__":
     update_schedule()
