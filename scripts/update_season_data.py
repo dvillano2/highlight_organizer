@@ -1,5 +1,5 @@
 from sqlalchemy import text
-from pull_season_data import organize_mws, mws_to_df
+from scripts.pull_season_data import organize_mws, mws_to_df
 from app.db import engine, Session, local_engine, LocalSession
 from sqlalchemy.exc import SQLAlchemyError
 

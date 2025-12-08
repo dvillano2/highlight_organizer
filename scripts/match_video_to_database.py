@@ -8,8 +8,8 @@ from typing import List
 from typing import Tuple
 import re
 import sqlite3
-from patterns import team_regex
-from youtube_urls import pull_possible_video_urls
+from scripts.patterns import team_regex
+from scripts.youtube_urls import pull_possible_video_urls
 from app.db import engine, local_engine, Session, LocalSession
 from sqlalchemy import text
 
