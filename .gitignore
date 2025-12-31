@@ -3,3 +3,6 @@ venv/
 .DS_Store
 .env
 PL_20252026_season.db
+*.swp
+*.swo
+*.swx
