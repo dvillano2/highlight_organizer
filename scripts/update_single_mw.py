@@ -1,5 +1,5 @@
-from pull_season_data import pull_single_mw, mws_to_df
-from update_season_data import update_query
+from scripts.pull_season_data import pull_single_mw, mws_to_df
+from scripts.update_season_data import update_query
 from sqlalchemy import text
 from app.db import engine, Session, local_engine, LocalSession
 from sqlalchemy.exc import SQLAlchemyError
